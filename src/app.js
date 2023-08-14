@@ -1,6 +1,6 @@
 const express = require('express');
 const app = express();
-const exphbs = require('express-handlebars');
+const handlebars = require('express-handlebars');
 const productsRouter = require('../src/routes/products.router');
 const cartRouter = require('../src/routes/cart.router');
 const productos = require('./managers/contenedor');
@@ -8,16 +8,11 @@ const path = require('path');
 
 const PORT = 8080;
 
-app.set('views', path.join(__dirname, 'views'));
-app.engine('.hbs',
-  exphbs.create({
-  defaultLayout: 'main',
-  layoutsDir: path.join(app.get('views'), 'layouts'),
-  partialsDir: path.join(app.get('views'), 'partials'),
-  extname: '.hbs'
-}).engine);
-
-app.set('view engine', '.hbs');
+//Config Handlebars
+app.engine("handlebars", handlebars.engine())
+app.set("views", path.join(__dirname, '/views'))
+app.set("view engine", "handlebars")
+app.use(express.static(path.join(__dirname, '/public')))
 
 
 
@@ -25,7 +20,7 @@ app.use(express.json());
 app.use("/" , productsRouter);
 app.use("/" , cartRouter);
 
-
+//Routing
 app.get("/", async(req, res)=>{
     let todosProductos = await productos.getAllProducts()  
         res.render("index", {
