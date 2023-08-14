@@ -1,21 +1,25 @@
 const express = require('express');
-const handlebars = require('express-handlebars');
 const app = express();
+const exphbs = require('express-handlebars');
 const productsRouter = require('../src/routes/products.router');
 const cartRouter = require('../src/routes/cart.router');
-const path = require('path');
 const productos = require('./managers/contenedor');
-
-
-
-
+const path = require('path');
 
 const PORT = 8080;
 
-app.engine("handlebars", handlebars.engine() )
-app.set("views", __dirname + "/views")
-app.set('view engine', 'handlebars');
-app.use("/", express.static(__dirname + "/public"))
+app.set('views', path.join(__dirname, 'views'));
+app.engine('.hbs',
+  exphbs.create({
+  defaultLayout: 'main',
+  layoutsDir: path.join(app.get('views'), 'layouts'),
+  partialsDir: path.join(app.get('views'), 'partials'),
+  extname: '.hbs'
+}).engine);
+
+app.set('view engine', '.hbs');
+
+
 
 app.use(express.json());
 app.use("/" , productsRouter);
