@@ -2,7 +2,8 @@
   "dependencies": {
     "express": "^4.18.2",
     "express-handlebars": "^7.1.2",
-    "hbs": "^4.2.0"
+    "hbs": "^4.2.0",
+    "socket.io": "^4.7.2"
   },
   "name": "entrega1-backend",
   "version": "1.0.0",

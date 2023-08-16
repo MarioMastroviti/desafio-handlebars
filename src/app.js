@@ -1,45 +1,51 @@
+const fs = require('fs');
 const express = require('express');
 const app = express();
 const handlebars = require('express-handlebars');
 const productsRouter = require('../src/routes/products.router');
 const cartRouter = require('../src/routes/cart.router');
-const productos = require('./managers/contenedor');
 const path = require('path');
+const http = require('http');
+const { Server } = require('socket.io');
+const productos = require('./managers/contenedor');
 
-const PORT = 8080;
+const server = http.createServer(app);
+const io = new Server(server);
 
-//Config Handlebars
-app.engine("handlebars", handlebars.engine())
-app.set("views", path.join(__dirname, '/views'))
-app.set("view engine", "handlebars")
-app.use(express.static(path.join(__dirname, '/public')))
+// Configuración de Handlebars
+app.engine('handlebars', handlebars.engine());
+app.set('views', path.join(__dirname, 'views'));
+app.set('view engine', 'handlebars');
 
+// Configuración de archivos estáticos
+app.use(express.static(path.join(__dirname, 'public')));
 
-
+// Configuración de rutas y middleware
 app.use(express.json());
-app.use("/" , productsRouter);
-app.use("/" , cartRouter);
+app.use('/', productsRouter);
+app.use('/', cartRouter);
 
-//Routing
-app.get("/", async(req, res)=>{
-    let todosProductos = await productos.getAllProducts()  
-        res.render("index", {
-        titulo: "Lista de productos",
-        products : todosProductos
-        })
-})
-
-app.get("/:id", async(req, res)=>{
-    const id = parseInt(req.params.id);
-   let productoId = await productos.productById(id)  
-        res.render("prod", {
-        titulo: "Producto Filtrado",
-        products : productoId
-        })
-})
+// Ruta principal para renderizar la página realTimeProducts
+app.get('/', (req, res) => {
+    res.render('realTimeProducts', {
+        titulo: 'Productos en tiempo real'
+    });
+});
 
 
-app.listen(PORT, () => {
-    console.log(`escuchando en el puerto ${PORT}`)
-})
+io.on("connection", async(socket) => {
+    
+    const products = await productos.getAllProducts();
+    io.emit('productosActualizados', products);
 
+      socket.on('disconnect', () => {
+        console.log('Un usuario se ha desconectado');
+      })
+      })
+          
+
+
+const PORT = process.env.PORT || 8080;
+server.listen(PORT, () => {
+    console.log(`Servidor escuchando en el puerto ${PORT}`);
+});

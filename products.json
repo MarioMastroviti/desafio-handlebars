@@ -18,5 +18,15 @@
     "id": 4,
     "titulo": "producto 4",
     "precio": 300
+  },
+  {
+    "id": 5,
+    "titulo": "producto 6",
+    "precio": 30000
+  },
+  {
+    "id": 6,
+    "titulo": "producto 22",
+    "precio": 30000
   }
 ]
