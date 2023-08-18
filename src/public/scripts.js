@@ -10,9 +10,6 @@ socket.on('productosActualizados', (products) => {
     console.log('Productos actualizados:', products);
 });
 
-socket.on('disconnect', () => {
-    console.log('Conexión cerrada');
-});
 
 function renderProducts(products) {
     productList.innerHTML = '';

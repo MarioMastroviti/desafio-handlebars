@@ -37,10 +37,6 @@ io.on("connection", async(socket) => {
     
     const products = await productos.getAllProducts();
     io.emit('productosActualizados', products);
-
-      socket.on('disconnect', () => {
-        console.log('Un usuario se ha desconectado');
-      })
       })
           
 
